@@ -23,6 +23,10 @@ func getEnv() *global_state.State {
 	state.GOOGLE_CREDENTIALS = os.Getenv("GOOGLE_CREDENTIALS")
 	state.GOOGLE_API_KEY = os.Getenv("GOOGLE_API_KEY")
 
+	state.REBOK_USERNAME = os.Getenv("REBOK_USERNAME")
+	state.REBOK_PASSWORD = os.Getenv("REBOK_PASSWORD")
+	state.REBOK_GET_USER = os.Getenv("REBOK_GET_USER")
+
 	if state.DEBUG == "" {
 		state.DEBUG = "false"
 	}
@@ -30,9 +34,17 @@ func getEnv() *global_state.State {
 		log.Fatalf("No calendar defined")
 	}
 	if state.GOOGLE_API_KEY == "" { // Google API Key or credentials is required
-		log.Fatalf("No Google API Key defined")
-	} else if state.GOOGLE_CREDENTIALS == "" {
-		log.Fatalf("No Google Credentials defined")
+		log.Fatalf("No Google API Key defined, checking for Google Credentials")
+		if state.GOOGLE_CREDENTIALS == "" {
+			log.Fatalf("No Google Credentials defined")
+		}
+	}
+
+	if state.REBOK_USERNAME == "" {
+		log.Fatalf("No Rebook username defined")
+	}
+	if state.REBOK_PASSWORD == "" {
+		log.Fatalf("No Rebook password defined")
 	}
 
 	return &state

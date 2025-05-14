@@ -15,6 +15,11 @@ type State struct {
 	GOOGLE_CALENDAR_ID string
 	GOOGLE_CREDENTIALS string
 	GOOGLE_API_KEY     string
+
+	// Rebook Params
+	REBOK_USERNAME string
+	REBOK_PASSWORD string
+	REBOK_GET_USER string
 }
 
 func NewState() State {

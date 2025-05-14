@@ -3,9 +3,11 @@ package main
 import (
 	"bet25-calendar-sync/global_state"
 	"bet25-calendar-sync/helpers"
+	"bet25-calendar-sync/rebok_api"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	log "github.com/s00500/env_logger"
@@ -43,10 +45,46 @@ func main() {
 	var state *global_state.State
 	state = getEnv()
 
-	_=state
+	_ = state
+
+	user := rebok_api.RebokApiUser{
+		Username: state.REBOK_USERNAME,
+		Password: state.REBOK_PASSWORD,
+	}	
+
+	main2(user)
+	panic("")
+
+	rb := rebok_api.NewRebokApi()
+	respBody, err := rb.Login(user)
+	if err != nil {
+		log.Fatalf("Error logging in: %s", err)
+	}
+
+	// log.Warn(respBody)
+	if strings.Contains(respBody, "Välkommen till Resursbokning") {
+		log.Info("Logged in")
+	} else {
+		log.Warn("Failed to log in")
+		return
+	}
+
+	_, err = rb.GetEventsFromRebok(state.REBOK_GET_USER)
+	if err != nil {
+		log.Fatalf("Error getting events: %s", err)
+	}
+
+MainLoop:
+	for {
+		select {
+		case <-stop: // Stop the program
+			break MainLoop
+		case <-time.After(5 * time.Second):
+			log.Info("Running")
+		}
+	}
 
 	// Stop the program
-	<-stop
 	log.Info("Exiting")
 
 	// close log file as the last thing

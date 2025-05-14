@@ -28,3 +28,4 @@ go.work.sum
 
 token.txt
 /node_modules
+/cookies
